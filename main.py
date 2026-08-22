@@ -13,7 +13,7 @@ import argparse
 import time
 import subprocess
 from datetime import datetime
-from utils.helpers import check_root, check_tools, banner, log
+from utils.helpers import check_root, check_tools, log
 from recon.scanner import WiFiScanner
 from ghostap.hostapd_config import HostapdConfig
 from ghostap.deauth import DeauthEngine
