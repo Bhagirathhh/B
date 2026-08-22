@@ -174,7 +174,11 @@ class GhostPillage:
         
         # FIXED: MITMEngine(config_dir, verbose) — pehle argument interface tha jo constructor nahi leta
         # FIXED: start_interception() does not accept interface= kwarg
-        mitm = MITMEngine(self.config_dir, self.verbose)
+        mitm = MITMEngine(
+            self.interface,
+            self.config_dir,
+            self.verbose
+            )
         mitm.start_interception(mode="auto")
         
         log(self.log_file, "[+] Pillage phase executed", self.verbose)
